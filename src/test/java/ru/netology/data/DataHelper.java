@@ -56,24 +56,27 @@ public class DataHelper {
         return token;
     }
 
-    public static void cardsView(String token) {
-
+    public static CardResponseInfo[] cardsView(String token) {
+        CardResponseInfo[] cards =
                         given() // "дано"
                         .spec(requestSpec) // указываем, какую спецификацию используем
                         .auth().oauth2(token)
                         .when()// "когда"
                         .get("/api/cards") // на какой путь относительно BaseUri отправляем запрос
                         .then()// "тогда ожидаем"
-                        .statusCode(200);// код 200 OK
-
+                        .statusCode(200)// код 200 OK
+                        .extract()
+                                .response()
+                                .as(CardResponseInfo[].class);
+        return cards;
     }
 
-    //@Value
-   // public static class CardResponseInfo {
-        //String id;
-        //String number;
-        //int balance;
-    //}
+    @Value
+   public static class CardResponseInfo {
+        String id;
+        String number;
+        int balance;
+    }
 
     public static void transferAmount(String token, TransferInfo transferInfo) {
 
@@ -87,15 +90,21 @@ public class DataHelper {
                 .statusCode(200); // код 200 OK
     }
 
-   // public static String getRandomLogin() {
-       // String login = faker.name().username();
-       // return login;
-   // }
+    public static String generateRandomLogin() {
+        return faker.name().username();
+    }
 
-   // public static String getRandomPassword() {
-      //  String password = faker.internet().password();
-      //  return password;
-   // }
+    public static String generateRandomPassword() {
+        return faker.internet().password();
+    }
+
+    public static AuthInfo generateRandomUser (){
+        return new AuthInfo(generateRandomLogin(), generateRandomPassword());
+    }
+
+    public static String generateRandomVerificationCode(){
+        return new String(faker.numerify("######"));
+    }
 
 
     @Value
@@ -121,8 +130,8 @@ public class DataHelper {
         int amount;
     }
 
-    public static TransferInfo getTransferInfo() {
-        return new TransferInfo("5559 0000 0000 0002", "5559 0000 0000 0008", 5000);
+    public static TransferInfo getTransferInfo(String from, String to, int amount) {
+        return new TransferInfo(from, to, amount);
     }
 
 
@@ -130,19 +139,11 @@ public class DataHelper {
         return new AuthInfo("vasya", "qwerty123");
     }
 
-
-   // @Data
-   // @NoArgsConstructor
-   // @AllArgsConstructor
-   // public static class VerificationCode {
-     //   public String code;
-   // }
-
-    public static String getVerificationCode(AuthInfo authInfo) {
-        return new String("599640");
+    public static int generateValidAmount(int balance){
+        return Math.abs(balance)/10;
     }
 
-  //  public static int generateValidAmount(int balance){
-      //  return Math.abs(balance)/10;
-  //  }
+    public static int generateInvalidAmount(int balance){
+        return Math.abs(balance) + 1;
+    }
 }

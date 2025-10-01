@@ -45,7 +45,15 @@ public class SQLHelper {
         try (var conn = getConnection()) {
             runner.execute(conn, "DELETE FROM auth_codes");
         }
-
     }
+
+    @SneakyThrows
+    public static String getCardNumberByCardId (String cardId){
+        var cardNumberSQL = "SELECT number FROM cards WHERE id = ?;";
+        try (var conn = getConnection()) {
+            return runner.query(conn, cardNumberSQL, new ScalarHandler<>());
+        }
+    }
+
 }
 
