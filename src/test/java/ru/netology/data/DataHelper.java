@@ -5,9 +5,6 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.Value;
 
 import java.util.Locale;
@@ -40,6 +37,21 @@ public class DataHelper {
                 .statusCode(200); // код 200 OK
     }
 
+    public static String loginErrorRequest(AuthInfo user) {
+
+        String code =
+        given() // "дано"
+                .spec(requestSpec) // указываем, какую спецификацию используем
+                .body(user) // передаём в теле объект, который будет преобразован в JSON
+                .when().log().all() // "когда"
+                .post("/api/auth") // на какой путь относительно BaseUri отправляем запрос
+                .then().log().all()// "тогда ожидаем"
+                .statusCode(400) // код 200 OK
+                .extract()
+                .path("code");
+        return code;
+    }
+
     public static String verificationRequest(VerificationInfo info) {
 
         String token =
@@ -54,6 +66,21 @@ public class DataHelper {
                 .path("token");
 
         return token;
+    }
+
+    public static String verificationErrorRequest(VerificationInfo info) {
+
+        String code =
+                given() // "дано"
+                        .spec(requestSpec) // указываем, какую спецификацию используем
+                        .body(info) // передаём в теле объект, который будет преобразован в JSON
+                        .when().log().all() // "когда"
+                        .post("/api/auth/verification") // на какой путь относительно BaseUri отправляем запрос
+                        .then().log().all()// "тогда ожидаем"
+                        .statusCode(400) // код 200 OK
+                        .extract()
+                        .path("code");
+        return code;
     }
 
     public static CardResponseInfo[] cardsView(String token) {
@@ -145,5 +172,10 @@ public class DataHelper {
 
     public static int generateInvalidAmount(int balance){
         return Math.abs(balance) + 1;
+    }
+
+    public static int generateNegativeAmount(int balance){
+        int amount = Math.abs(balance)/10;
+        return -amount;
     }
 }
