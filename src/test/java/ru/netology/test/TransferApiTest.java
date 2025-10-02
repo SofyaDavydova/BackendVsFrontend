@@ -11,10 +11,10 @@ import static ru.netology.data.SQLHelper.*;
 
 public class TransferApiTest {
 
-    @AfterAll
-    static void cleaningAllTables(){
-        cleanDatabase();
-    }
+    //@AfterAll
+    //static void cleaningAllTables(){
+        //cleanDatabase();
+    //}
 
     @AfterEach
     void cleaningAuthCode(){
@@ -88,7 +88,7 @@ public class TransferApiTest {
     void shouldNotLoginWithRandomUser() {
         var user = generateRandomUser();
         String code = loginErrorRequest(user);
-        assertThat(code, equalTo("AUTH_INVALID"));
+        Assertions.assertEquals("AUTH_INVALID", code);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TransferApiTest {
         var verificationCode = generateRandomVerificationCode();
         var verificationInfo = getVerificationInfo(user.getLogin(), verificationCode);
         String code = verificationErrorRequest(verificationInfo);
-        assertThat(code, equalTo("AUTH_INVALID"));
+        Assertions.assertEquals("AUTH_INVALID", code);
     }
 
     @Test
